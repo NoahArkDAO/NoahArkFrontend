@@ -50,8 +50,6 @@ The files/folder structure are a  **WIP** and may contain some unused files. The
 
 NoahArk uses [linguijs](https://github.com/lingui/js-lingui) to manage translation.
 
-The language files are located in a submodule deployed in `src/locales/translations`. This submodule points to the [noahark translation repository]()
-
 In order to mark text for translation you can use:
 - The <Trans> component in jsx templates eg. `<Trans>Translate me!</Trans>`
 - The t function in javascript code and jsx templates. ``` t`Translate me` ```
