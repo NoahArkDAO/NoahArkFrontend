@@ -9,13 +9,7 @@ import { abi as ierc20Abi, abi as ierc20ABI } from "../abi/IERC20.json";
 import { fetchAccountSuccess, getBalances } from "./AccountSlice";
 import { clearPendingTxn, fetchPendingTxns } from "./PendingTxnsSlice";
 import { abi as MigrateABI } from "../abi/preSaleAndMigrate/MigrateContract.json";
-import { segmentUA } from "../helpers/userAnalyticHelpers";
-interface IUAData {
-  address: string;
-  value: string;
-  txHash: string | null;
-  type: string | null;
-}
+
 function alreadyApprovedToken(anrkAllowance: BigNumber) {
   // set defaults
   let bigZero = BigNumber.from("0");
@@ -62,7 +56,7 @@ export const migrateApprove = createAsyncThunk(
         await approveTx.wait();
       }
     } catch (e: unknown) {
-      dispatch(error((e as IJsonRPCError).message));
+      dispatch(error((e as IJsonRPCError).data.message));
       return;
     } finally {
       if (approveTx) {
@@ -97,17 +91,9 @@ export const migratingAnrk = createAsyncThunk(
       return;
     }
     let migratingTx;
-    let uaData: IUAData = {
-      address: address,
-      value: "migrate",
-      txHash: null,
-      type: null,
-    };
     try {
-      uaData.type = "migrating";
       const pendingTxnType = "on_migrating";
       migratingTx = await migratingContract.migrate(amount * Math.pow(10, 9));
-      uaData.txHash = migratingTx.hash;
       dispatch(fetchPendingTxns({ txnHash: migratingTx.hash, text: "Migrating", type: pendingTxnType }));
       await migratingTx.wait();
       const daiContract = new ethers.Contract(
@@ -132,11 +118,10 @@ export const migratingAnrk = createAsyncThunk(
       );
     } catch (e: unknown) {
       const rpcError = e as IJsonRPCError;
-      dispatch(error(rpcError.message));
+      dispatch(error(rpcError.data.message));
       return;
     } finally {
       if (migratingTx) {
-        // segmentUA(uaData);
         dispatch(clearPendingTxn(migratingTx.hash));
       }
     }

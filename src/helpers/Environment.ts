@@ -9,11 +9,30 @@ export class EnvHelper {
    * @returns `process.env`
    */
   static env = process.env;
-  // static alchemyTestnetURI = `https://eth-rinkeby.alchemyapi.io/v2/${EnvHelper.env.REACT_APP_TESTNET_ALCHEMY}`;
-  static alchemyTestnetURI = `https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161`;
   static whitespaceRegex = /\s+/;
   static alchemyAvaxTestURI = `https://api.avax-test.network/ext/bc/C/rpc`;
   static alchemyAvaxURI = `https://api.avax.network/ext/bc/C/rpc`;
+
+  static evionment(){
+    if (EnvHelper.env.REACT_APP_ENV === "prod") {
+      return {
+        REACT_APP_CHAIN_ID:"43114",
+        REACT_APP_CHAIN_ID_16:"0xa86a",
+        REACT_APP_CHAIN_NAME:"Avalanche Mainnet",
+        REACT_APP_CHAIN_RPC:"https://api.avax.network/ext/bc/C/rpc",
+        REACT_APP_CHAIN_BLOCK:"https://snowtrace.io/",
+      }
+    } else {
+      return {
+        REACT_APP_CHAIN_ID:"43113",
+        REACT_APP_CHAIN_ID_16:"0xa869",
+        REACT_APP_CHAIN_NAME:"Avalanche Fuji Testnet",
+        REACT_APP_CHAIN_RPC:"https://api.avax-test.network/ext/bc/C/rpc",
+        REACT_APP_CHAIN_BLOCK:"https://testnet.snowtrace.io/",
+      }
+    }
+
+ }
   /**
    * Returns env contingent segment api key
    * @returns segment
@@ -25,6 +44,23 @@ export class EnvHelper {
   static getGaKey() {
     return EnvHelper.env.REACT_APP_GA_API_KEY;
   }
+
+  static getDefaultChainID() {
+    return this.evionment().REACT_APP_CHAIN_ID;
+  }
+  static getDefaultChainID16() {
+    return this.evionment().REACT_APP_CHAIN_ID_16;
+  }
+  static getDefaultChainName() {
+    return this.evionment().REACT_APP_CHAIN_NAME;
+  }
+  static getDefaultChainRPC() {
+    return this.evionment().REACT_APP_CHAIN_RPC;
+  }
+  static getDefaultChainBlock() {
+    return this.evionment().REACT_APP_CHAIN_BLOCK;
+  }
+
 
   static isNotEmpty(envVariable: string) {
     if (envVariable.length > 10) {

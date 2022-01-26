@@ -1,9 +1,15 @@
 import { JsonRpcProvider, StaticJsonRpcProvider } from "@ethersproject/providers";
 import { Bond, NetworkID } from "src/lib/Bond";
 
+export interface IJsonRPCErrorData {
+  readonly message: string;
+  readonly code: number;
+}
+
 export interface IJsonRPCError {
   readonly message: string;
   readonly code: number;
+  readonly data: IJsonRPCErrorData;
 }
 
 export interface IBaseAsyncThunk {

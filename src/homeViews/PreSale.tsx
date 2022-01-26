@@ -16,6 +16,7 @@ import DaiImg from "../assets/tokens/DAI.svg";
 import NrkImg from "../assets/tokens/token_NRK.svg";
 import ANrkImg from "../assets/tokens/ANRK.svg";
 import moment from "moment";
+import { EnvHelper } from "../helpers/Environment";
 const addTokenToWallet = (tokenSymbol: string, tokenAddress: string, address: string) => async () => {
   if (window.ethereum) {
     const host = window.location.origin;
@@ -112,9 +113,13 @@ const PreSale = () => {
       dispatch(error("Pre-sale begins at 00:00 UTC 14th January and ends at 23:59 UTC 16th January"));
       return ;
     }
-    if (chainID !== 43114) {
-      const switchNet = await _switchNet("0xa86a").catch((err: any) => {
-        const addNet = _addNet("0xa86a");
+    if (!provider) {
+      dispatch(error("Please connect your wallet!"));
+      return;
+    }
+    if (chainID !== parseInt(EnvHelper.getDefaultChainID() as string)) {
+      const switchNet = await _switchNet(EnvHelper.getDefaultChainID16()).catch((err : any) => {
+        const addNet = _addNet(EnvHelper.getDefaultChainID16());
       });
     }
     if (!amount) {
@@ -133,9 +138,13 @@ const PreSale = () => {
       dispatch(error("Pre-sale begins at 00:00 UTC 14th January and ends at 23:59 UTC 16th January"));
       return
     }
-    if (chainID !== 43114) {
-      const switchNet = await _switchNet("0xa86a").catch((err: any) => {
-        const addNet = _addNet("0xa86a");
+    if (!provider) {
+      dispatch(error("Please connect your wallet!"));
+      return;
+    }
+    if (chainID !== parseInt(EnvHelper.getDefaultChainID() as string)) {
+      const switchNet = await _switchNet(EnvHelper.getDefaultChainID16()).catch((err : any) => {
+        const addNet = _addNet(EnvHelper.getDefaultChainID16());
       });
     }
     await dispatch(tradingApprove({ token: coinType, provider, address, networkID: chainID }));

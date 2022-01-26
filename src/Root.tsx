@@ -1,3 +1,9 @@
+/*
+ * @Author: jianwen.Wang
+ * @Date: 2022-01-05 10:53:48
+ * @LastEditTime: 2022-01-19 16:31:51
+ * @LastEditors: jiawen.wang
+ */
 /* eslint-disable global-require */
 import { FC, useEffect } from "react";
 import { Provider } from "react-redux";
@@ -20,9 +26,11 @@ const Root: FC = () => {
     <Web3ContextProvider>
       <Provider store={store}>
         <I18nProvider i18n={i18n}>
-          <BrowserRouter basename={"/#"}>
+          <HashRouter>
+          {/* <BrowserRouter basename={"/#"}> */}
             <App />
-          </BrowserRouter>
+          {/* </BrowserRouter> */}
+          </HashRouter>
         </I18nProvider>
       </Provider>
     </Web3ContextProvider>

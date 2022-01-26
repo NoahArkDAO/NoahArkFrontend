@@ -14,7 +14,7 @@ export default function Social() {
         <SvgIcon color="primary" component={Twitter} />
       </Link>
 
-      <Link href="https://discord.com/invite/KaTFSdmj9f" target="_blank">
+      <Link href="https://discord.gg/nak" target="_blank">
         <SvgIcon color="primary" component={Discord} />
       </Link>
     </div>

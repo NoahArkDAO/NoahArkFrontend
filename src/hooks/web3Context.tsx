@@ -14,14 +14,14 @@ import { EnvHelper } from "../helpers/Environment";
 import { NodeHelper } from "src/helpers/NodeHelper";
 
 /**
- * kept as function to mimic `getMainnetURI()`
+ * kept as function to mimic `getAvaxNetURI()`
  * @returns string
  */
-function getAvaxTestnetURI() {
-  return EnvHelper.alchemyAvaxTestURI;
-}
 function getAvaxNetURI() {
   return EnvHelper.alchemyAvaxURI;
+}
+function getAvaxTestnetURI() {
+  return EnvHelper.alchemyAvaxTestURI;
 }
 /**
  * determine if in IFrame for Ledger Live
@@ -29,23 +29,6 @@ function getAvaxNetURI() {
 function isIframe() {
   return window.location !== window.parent.location;
 }
-
-const ALL_URIs = NodeHelper.getNodesUris();
-
-/**
- * "intelligently" loadbalances production API Keys
- * @returns string
- */
-// function getMainnetURI(): string {
-//   // Shuffles the URIs for "intelligent" loadbalancing
-//   const allURIs = ALL_URIs.sort(() => Math.random() - 0.5);
-//
-//   // There is no lightweight way to test each URL. so just return a random one.
-//   // if (workingURI !== undefined || workingURI !== "") return workingURI as string;
-//   const randomIndex = Math.floor(Math.random() * allURIs.length);
-//   return allURIs[randomIndex];
-// }
-
 /*
   Types
 */
@@ -61,6 +44,7 @@ type onChainProvider = {
   web3Modal: Web3Modal;
   _switchNet: Function;
   _addNet: Function;
+  currentChainID: number;
 };
 
 export type Web3ContextData = {
@@ -89,18 +73,18 @@ export const useAddress = () => {
 
 export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ children }) => {
   const [connected, setConnected] = useState(false);
-  // NOTE (appleseed): if you are testing on rinkeby you need to set chainId === 4 as the default for non-connected wallet testing...
-  // ... you also need to set getTestnetURI() as the default uri state below
-  const [chainID, setChainID] = useState(43114);
+  // NOTE (appleseed): if you are testing on avax you need to set chainId === 43113 as the default for non-connected wallet testing...
+  // ... you also need to set getAvaxTestnetURI() as the default uri state below
+  const [currentChainID, setCurrentChainID] = useState(0);
+  const [chainID, setChainID] = useState(parseInt(EnvHelper.getDefaultChainID() as string));
   const [address, setAddress] = useState("");
 
-  const [uri, setUri] = useState(getAvaxNetURI());
+  const [uri, setUri] = useState(EnvHelper.getDefaultChainRPC() as string);
 
   const [provider, setProvider] = useState<JsonRpcProvider>(new StaticJsonRpcProvider(uri));
 
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>(
     new Web3Modal({
-      // network: "mainnet", // optional
       cacheProvider: true, // optional
       providerOptions: {
         walletconnect: {
@@ -164,27 +148,27 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
       params: [
         {
           chainId: chainId,
-          rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
-          chainName: "Avalanche Fuji Testnet",
+          rpcUrls: [EnvHelper.getDefaultChainRPC()],
+          chainName: EnvHelper.getDefaultChainName(),
           nativeCurrency: {
             name: "AVAX",
             decimals: 18,
             symbol: "AVAX",
           },
-          blockExplorerUrls: ["https://testnet.snowtrace.io/"],
+          blockExplorerUrls: [EnvHelper.getDefaultChainBlock()],
         },
       ],
     });
   };
   /**
-   * throws an error if networkID is not 1 (mainnet) or 4 (rinkeby)
+   * throws an error if networkID is not 43114 (avax) or 43113 (avax test)
    */
   const _checkNetwork = (otherChainID: number): boolean => {
     if (chainID !== otherChainID) {
       // console.warn("You are switching networks");
       if (otherChainID === 43113 || otherChainID === 43114) {
         setChainID(otherChainID);
-        otherChainID === 43114 ? setUri(getAvaxNetURI) : setUri(getAvaxTestnetURI);
+        setUri(EnvHelper.getDefaultChainRPC());
         return true;
       }
       return false;
@@ -200,8 +184,6 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
       rawProvider = new IFrameEthereumProvider();
     } else {
       rawProvider = await web3Modal.connect();
-
-      // console.log("rawProvider: ", rawProvider.wc.killSession());
     }
 
     // new _initListeners implementation matches Web3Modal Docs
@@ -213,16 +195,16 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
     const validNetwork = _checkNetwork(chainId);
     if (!validNetwork) {
       console.error("Wrong network, please switch to Avalanche mainnet");
-      return;
+      // return
     }
     // Save everything after we've validated the right network.
     // Eventually we'll be fine without doing network validations.
     setAddress(connectedAddress);
     setProvider(connectedProvider);
 
+    setCurrentChainID(parseInt(chainId + ""))
     // Keep this at the bottom of the method, to ensure any repaints have the data we need
     setConnected(true);
-
     return connectedProvider;
   }, [provider, web3Modal, connected]);
 
@@ -252,6 +234,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
       uri,
       _switchNet,
       _addNet,
+      currentChainID
     }),
     [
       connect,
@@ -265,6 +248,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
       uri,
       _switchNet,
       _addNet,
+      currentChainID
     ],
   );
 

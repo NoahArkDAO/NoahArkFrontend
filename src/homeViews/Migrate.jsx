@@ -13,11 +13,11 @@ import { migrateApprove, migratingAnrk } from "../slices/MigrateSlice";
 import { useDispatch } from "react-redux";
 import { error } from "../slices/MessagesSlice";
 import { addresses, TOKEN_DECIMALS } from "../constants";
-import DAIIcon from "../assets/home/DAI.png";
 import NrkImg from "../assets/tokens/token_NRK.svg";
 import ANRKImgSVG from "../assets/tokens/ANRK.svg";
 import DAIImgSVG from "../assets/tokens/DAI.svg";
-import { segmentUA } from "../helpers/userAnalyticHelpers";
+import { EnvHelper } from "../helpers/Environment";
+import moment from "moment";
 const addTokenToWallet = (tokenSymbol , tokenAddress , address ) => async () => {
   if (window.ethereum) {
     const host = window.location.origin;
@@ -70,21 +70,37 @@ function Migrate() {
   const anrkAllowance = useAppSelector(state => {
     return (state.account.trading && state.account.trading.anrkApprove) || 0;
   });
+  const times = moment().format()
+  const startMigrateTime = moment(times).isAfter(moment("2022-01-24T00:00:00.000Z"))
   const onMigrateAnrk= async (anrkAmount) => {
-    if (chainID !== 43114) {
-      const switchNet = await _switchNet("0xa86a").catch((err) => {
-        const addNet = _addNet("0xa86a");
+    if (!startMigrateTime){
+      return dispatch(error("Swap aNRK for NRK will be opened at 00:00 UTC 24th January"));
+    }
+    if (!provider) {
+      dispatch(error("Please connect your wallet!"));
+      return;
+    }
+    if (chainID !== parseInt(EnvHelper.getDefaultChainID())) {
+      const switchNet = await _switchNet(EnvHelper.getDefaultChainID16()).catch((err) => {
+        const addNet = _addNet(EnvHelper.getDefaultChainID16());
       });
     }
     if (anrkAmount > parseFloat(anrkBalance)) {
-      return dispatch(error(t`You don't have enough aNRK`));
+      return dispatch(error(`You don't have enough aNRK`));
     }
     await dispatch(migratingAnrk({amount: anrkAmount, provider, address, networkID: chainID }));
   };
   const onMigrateApprove= async () => {
-    if (chainID !== 43114) {
-      const switchNet = await _switchNet("0xa86a").catch((err) => {
-        const addNet = _addNet("0xa86a");
+    if (!startMigrateTime){
+      return dispatch(error("Swap aNRK for NRK will be opened at 00:00 UTC 24th January"));
+    }
+    if (!provider) {
+      dispatch(error("Please connect your wallet!"));
+      return;
+    }
+    if (chainID !== parseInt(EnvHelper.getDefaultChainID())) {
+      const switchNet = await _switchNet(EnvHelper.getDefaultChainID16()).catch((err) => {
+        const addNet = _addNet(EnvHelper.getDefaultChainID16());
       });
     }
     await dispatch(migrateApprove({ provider, address, networkID: chainID }));
@@ -156,7 +172,7 @@ function Migrate() {
               onMigrateAnrk(anrkAmount);
             }}
           >
-            {txnButtonText(pendingTransactions, "on_migrating", t`buy`)}
+            {txnButtonText(pendingTransactions, "on_migrating", `buy`)}
           </Button>
         ) : (
           <Button
@@ -166,7 +182,7 @@ function Migrate() {
               onMigrateApprove();
             }}
           >
-            {txnButtonText(pendingTransactions, "approve_migrate", t`Approve`)}
+            {txnButtonText(pendingTransactions, "approve_migrate", `Approve`)}
           </Button>
         )}
      </div>

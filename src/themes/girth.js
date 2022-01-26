@@ -51,7 +51,7 @@ export const girth = responsiveFontSizes(
         highlight: girthTheme.textHighlightColor,
       },
       typography: {
-        fontFamily: "Square",
+        fontFamily: "Cinzel",
       },
       props: {
         MuiSvgIcon: {

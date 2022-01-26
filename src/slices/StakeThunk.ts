@@ -86,7 +86,7 @@ export const changeApproval = createAsyncThunk(
         await approveTx.wait();
       }
     } catch (e: unknown) {
-      dispatch(error((e as IJsonRPCError).message));
+      dispatch(error((e as IJsonRPCError).data.message));
       return;
     } finally {
       if (approveTx) {
@@ -130,39 +130,27 @@ export const changeStake = createAsyncThunk(
     ) as StakingHelper;
 
     let stakeTx;
-    let uaData: IUAData = {
-      address: address,
-      value: value,
-      approved: true,
-      txHash: null,
-      type: null,
-    };
     try {
       if (action === "stake") {
-        uaData.type = "stake";
         stakeTx = await stakingHelper.stake(ethers.utils.parseUnits(value, "gwei"));
       } else {
-        uaData.type = "unstake";
         stakeTx = await staking.unstake(ethers.utils.parseUnits(value, "gwei"), true);
       }
       const pendingTxnType = action === "stake" ? "staking" : "unstaking";
-      uaData.txHash = stakeTx.hash;
       dispatch(fetchPendingTxns({ txnHash: stakeTx.hash, text: getStakingTypeText(action), type: pendingTxnType }));
       await stakeTx.wait();
     } catch (e: unknown) {
-      uaData.approved = false;
       const rpcError = e as IJsonRPCError;
       if (rpcError.code === -32603 && rpcError.message.indexOf("ds-math-sub-underflow") >= 0) {
         dispatch(
           error("You may be trying to stake more than your balance! Error code: 32603. Message: ds-math-sub-underflow"),
         );
       } else {
-        dispatch(error(rpcError.message));
+        dispatch(error(rpcError.data.message));
       }
       return;
     } finally {
       if (stakeTx) {
-        // segmentUA(uaData);
         dispatch(clearPendingTxn(stakeTx.hash));
       }
     }

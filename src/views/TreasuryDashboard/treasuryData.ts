@@ -33,7 +33,7 @@ query {
 
 export const rebasesDataQuery = `
 query {
-  rebases(where: {contract: "0xaA0B17eCE2D240A622fA9226DbDE4A7f33d3fe59"}, orderBy: timestamp, first: 1000, orderDirection: desc) {
+  rebases(where: {contract: "0xe830a08D4A794DEDB03A0B46cA7BBC8468ADc47B"}, orderBy: timestamp, first: 1000, orderDirection: desc) {
     percentage
     timestamp
   }

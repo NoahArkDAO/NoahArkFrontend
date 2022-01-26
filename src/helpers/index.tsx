@@ -1,4 +1,4 @@
-import { EPOCH_INTERVAL, BLOCK_RATE_SECONDS, addresses } from "../constants";
+import { EPOCH_INTERVAL, BLOCK_RATE_SECONDS, addresses, START_REBASE_BLOCK_NUMBER } from "../constants";
 import { BigNumber, ethers } from "ethers";
 import axios from "axios";
 import { abi as PairContractABI } from "../abi/PairContract.json";
@@ -62,7 +62,7 @@ export function trim(number = 0, precision = 0) {
 }
 
 export function getRebaseBlock(currentBlock: number) {
-  return currentBlock + EPOCH_INTERVAL - (currentBlock % EPOCH_INTERVAL);
+  return currentBlock + EPOCH_INTERVAL - ((currentBlock-START_REBASE_BLOCK_NUMBER) % EPOCH_INTERVAL);
 }
 
 export function secondsUntilBlock(startBlock: number, endBlock: number) {

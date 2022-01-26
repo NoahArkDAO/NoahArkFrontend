@@ -11,7 +11,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import useTheme from "./hooks/useTheme";
 import useBonds, { IAllBondData } from "./hooks/Bonds";
 import { useAddress, useWeb3Context } from "./hooks/web3Context";
-import useSegmentAnalytics from "./hooks/useSegmentAnalytics";
 
 import { calcBondDetails } from "./slices/BondSlice";
 import { loadAppDetails } from "./slices/AppSlice";
@@ -23,14 +22,15 @@ import TopBar from "./components/TopBar/TopBar.jsx";
 import NavDrawer from "./components/Sidebar/NavDrawer.jsx";
 import Messages from "./components/Messages/Messages";
 import NotFound from "./views/404/NotFound";
-import Home from "./Home";
+// import Home from "./Home";
+import Home from "./views/Home";
 
 import { dark as darkTheme } from "./themes/dark.js";
 import { light as lightTheme } from "./themes/light.js";
 import { girth as gTheme } from "./themes/girth.js";
+import { home as homeTheme } from "./themes/home";
 import "./style.scss";
 import { Bond as IBond } from "./lib/Bond";
-import { useGoogleAnalytics } from "./hooks/useGoogleAnalytics";
 import vconsole from "vconsole";
 // new vconsole()
 // 😬 Sorry for all the console logging
@@ -77,8 +77,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function App() {
-  useSegmentAnalytics();
-  useGoogleAnalytics();
   const location = useLocation();
   const dispatch = useDispatch();
   const [theme, toggleTheme, mounted] = useTheme();
@@ -150,11 +148,6 @@ function App() {
       // then user DOES have a wallet
       connect().then(() => {
         setWalletChecked(true);
-        // segmentUA({
-        //   type: "connect",
-        //   provider: provider,
-        //   context: currentPath,
-        // });
       });
     } else {
       // then user DOES NOT have a wallet
@@ -186,28 +179,29 @@ function App() {
     setIsSidebarExpanded(false);
   };
 
-  let themeMode = theme === "light" ? lightTheme : theme === "dark" ? darkTheme : gTheme;
-
+  // let themeMode = theme === "light" ? lightTheme : theme === "dark" ? darkTheme : gTheme;
+  let themeMode = darkTheme;
   useEffect(() => {
-    themeMode = theme === "light" ? lightTheme : darkTheme;
+    // themeMode = theme === "light" ? lightTheme : darkTheme;
+    themeMode = darkTheme;
   }, [theme]);
 
   useEffect(() => {
     if (isSidebarExpanded) handleSidebarClose();
   }, [location]);
-
   return (
     <div>
       <Route exact path="/">
-        <Messages />
-        <Home></Home>
+        <ThemeProvider theme={homeTheme}>
+          <Messages />
+          <CssBaseline />
+          <Home></Home>
+        </ThemeProvider>
       </Route>
       <Route path="/app">
         <ThemeProvider theme={themeMode}>
           <CssBaseline />
-          {/* {isAppLoading && <LoadingSplash />} */}
           <div className={`app ${isSmallerScreen && "tablet"} ${isSmallScreen && "mobile"} ${theme}`}>
-            <div className={`${theme === "light" ? "body-star-bg" : "body-star-dark-bg"}`}></div>
             <Messages />
             <TopBar theme={theme} toggleTheme={toggleTheme} handleDrawerToggle={handleDrawerToggle} />
             <nav className={classes.drawer}>

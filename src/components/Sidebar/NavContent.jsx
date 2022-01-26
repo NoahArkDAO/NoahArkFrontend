@@ -26,7 +26,7 @@ function NavContent({ themes }) {
   const { chainID } = useWeb3Context();
   const { bonds } = useBonds(chainID);
   const { ensName } = useAddress(address);
-
+  console.log("ensName: ", ensName);
   const checkPage = useCallback((match, location, page) => {
     const currentPath = location.pathname.replace("/", "");
     if (currentPath.indexOf("dashboard") >= 0 && page === "dashboard") {
@@ -52,7 +52,7 @@ function NavContent({ themes }) {
             <Link component={NavLink} to="/" target="_blank">
               <SvgIcon
                 color="primary"
-                component={themes === "light" ? NoaharkIcon : NoaharkIconDark}
+                component={themes === "dark" ? NoaharkIconDark : NoaharkIconDark}
                 viewBox="0 0 177 100"
                 style={{ minWidth: "177px", minHeight: "98px", width: "177px" }}
               />
@@ -63,7 +63,7 @@ function NavContent({ themes }) {
                 <span className="davatar">
                   <Davatar size={20} address={address} />
                 </span>
-                <Link href={`https://etherscan.io/address/${address}`} target="_blank">
+                <Link href={`https://snowtrace.io/address/${address}`} target="_blank">
                   {ensName || shorten(address)}
                 </Link>
               </div>

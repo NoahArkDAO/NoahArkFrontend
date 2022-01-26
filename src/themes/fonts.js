@@ -5,6 +5,10 @@ import SquareItalicWOFF from "../assets/fonts/EuclidSquare-Italic.woff";
 import SquareLightWOFF from "../assets/fonts/EuclidSquare-Light.woff";
 import SquareMediumWOFF from "../assets/fonts/EuclidSquare-Medium.woff";
 
+import CinzelRegularOTF from "../assets/new_home/Cinzel-Regular.otf";
+import CinzelBlackOTF from "../assets/new_home/Cinzel-Black.otf";
+import CinzelBoldOTF from "../assets/new_home/Cinzel-Bold.otf";
+
 const square = {
   fontFamily: "Square",
   fontStyle: "normal",
@@ -89,6 +93,36 @@ const squareItalic = {
     "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF",
 };
 
-const fonts = [square, squareLight, squareMedium, squareBold, squareItalic];
+const cinzel = {
+  fontFamily: "Cinzel",
+  fontStyle: "normal",
+  fontDisplay: "swap",
+  fontWeight: 500,
+  src: `url(${CinzelRegularOTF}) format('woff')`,
+  // src: `url(${CinzelBlackOTF}) format('woff')`,
+
+  unicodeRange:
+    "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF",
+};
+const cinzelBold = {
+  fontFamily: "Cinzel-Bold",
+  fontStyle: "bold",
+  fontDisplay: "swap",
+  fontWeight: 500,
+  src: `url(${CinzelBoldOTF}) format('woff')`,
+  unicodeRange:
+    "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF",
+};
+// cinzelBold,
+const cinzelBlack = {
+  fontFamily: "Cinzel-Black",
+  fontStyle: "bold",
+  fontDisplay: "swap",
+  fontWeight: 500,
+  src: `url(${CinzelBlackOTF}) format('woff')`,
+  unicodeRange:
+    "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF",
+};
+const fonts = [square, squareLight, squareMedium, squareBold, squareItalic, cinzelBold, cinzel, cinzelBlack];
 
 export default fonts;

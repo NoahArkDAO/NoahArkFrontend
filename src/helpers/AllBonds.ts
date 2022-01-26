@@ -1,3 +1,9 @@
+/*
+ * @Author: jianwen.Wang
+ * @Date: 2022-01-05 10:52:47
+ * @LastEditTime: 2022-01-20 09:07:11
+ * @LastEditors: jiawen.wang
+ */
 import { StableBond, LPBond, NetworkID, CustomBond, BondType } from "src/lib/Bond";
 import { addresses } from "src/constants";
 
@@ -15,7 +21,7 @@ export const dai = new StableBond({
   name: "dai",
   displayName: "DAI.e",
   bondToken: "DAI",
-  isAvailable: { [NetworkID.AVAXTestnet]: true , [NetworkID.AVAXNet]: true },
+  isAvailable: { [NetworkID.AVAXTestnet]: true, [NetworkID.AVAXNet]: true },
   bondIconSvg: DaiImg,
   bondContractABI: DaiBondContract,
   networkAddrs: {
@@ -34,7 +40,7 @@ export const nrk_dai = new LPBond({
   name: "nrk_dai_lp",
   displayName: "NRK-DAI.e LP",
   bondToken: "DAI",
-  isAvailable: {  [NetworkID.AVAXTestnet]: true, [NetworkID.AVAXNet]: true },
+  isAvailable: { [NetworkID.AVAXTestnet]: true, [NetworkID.AVAXNet]: true },
   bondIconSvg: NrkDaiImg,
   bondContractABI: BondNrkDaiContract,
   reserveContract: ReserveNrkDaiContract,
@@ -48,18 +54,20 @@ export const nrk_dai = new LPBond({
       reserveAddress: addresses[NetworkID.AVAXNet].NRK_DAI_RESERVE_ADDRESS,
     },
   },
-  lpUrl: "https://traderjoexyz.com/#/add/",
+  // lpUrl: `https://app.sushi.com/add/${addresses[NetworkID.AVAXNet].DAI_RESERVE_ADDRESS}/${
+  //   addresses[NetworkID.AVAXNet].NRK_ADDRESS
+  // }`,
+  lpUrl: `https://traderjoexyz.com/#/pool/${addresses[NetworkID.AVAXNet].NRK_ADDRESS}/${
+    addresses[NetworkID.AVAXNet].DAI_ADDRESS
+  }`,
 });
-
 
 // HOW TO ADD A NEW BOND:
 // Is it a stableCoin bond? use `new StableBond`
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
-export const allBonds = [
-  dai,
-  nrk_dai,
-];
+export const allBonds = [dai, nrk_dai];
+
 // TODO (appleseed-expiredBonds): there may be a smarter way to refactor this
 export const allExpiredBonds = [];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {

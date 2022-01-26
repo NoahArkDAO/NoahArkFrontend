@@ -15,7 +15,6 @@ import {
   IRedeemAllBondsAsyncThunk,
   IRedeemBondAsyncThunk,
 } from "./interfaces";
-import { segmentUA } from "../helpers/userAnalyticHelpers";
 
 export const changeApproval = createAsyncThunk(
   "bonding/changeApproval",
@@ -50,7 +49,7 @@ export const changeApproval = createAsyncThunk(
       );
       await approveTx.wait();
     } catch (e: unknown) {
-      dispatch(error((e as IJsonRPCError).message));
+      dispatch(error((e as IJsonRPCError).data.message));
     } finally {
       if (approveTx) {
         dispatch(clearPendingTxn(approveTx.hash));
@@ -195,20 +194,11 @@ export const bondAsset = createAsyncThunk(
 
     // Deposit the bond
     let bondTx;
-    let uaData = {
-      address: address,
-      value: value,
-      type: "Bond",
-      bondName: bond.displayName,
-      approved: true,
-      txHash: "",
-    };
     try {
       bondTx = await bondContract.deposit(valueInWei, maxPremium, depositorAddress);
       dispatch(
         fetchPendingTxns({ txnHash: bondTx.hash, text: "Bonding " + bond.displayName, type: "bond_" + bond.name }),
       );
-      uaData.txHash = bondTx.hash;
       await bondTx.wait();
       // TODO: it may make more sense to only have it in the finally.
       // UX preference (show pending after txn complete or after balance updated)
@@ -220,10 +210,9 @@ export const bondAsset = createAsyncThunk(
         dispatch(
           error("You may be trying to bond more than your balance! Error code: 32603. Message: ds-math-sub-underflow"),
         );
-      } else dispatch(error(rpcError.message));
+      } else dispatch(error(rpcError.data.message));
     } finally {
       if (bondTx) {
-        // segmentUA(uaData);
         dispatch(clearPendingTxn(bondTx.hash));
       }
     }
@@ -242,18 +231,9 @@ export const redeemBond = createAsyncThunk(
     const bondContract = bond.getContractForBond(networkID, signer);
 
     let redeemTx;
-    let uaData = {
-      address: address,
-      type: "Redeem",
-      bondName: bond.displayName,
-      autoStake: autostake,
-      approved: true,
-      txHash: "",
-    };
     try {
       redeemTx = await bondContract.redeem(address, autostake === true);
       const pendingTxnType = "redeem_bond_" + bond + (autostake === true ? "_autostake" : "");
-      uaData.txHash = redeemTx.hash;
       dispatch(
         fetchPendingTxns({ txnHash: redeemTx.hash, text: "Redeeming " + bond.displayName, type: pendingTxnType }),
       );
@@ -263,11 +243,9 @@ export const redeemBond = createAsyncThunk(
 
       dispatch(getBalances({ address, networkID, provider }));
     } catch (e: unknown) {
-      uaData.approved = false;
-      dispatch(error((e as IJsonRPCError).message));
+      dispatch(error((e as IJsonRPCError).data.message));
     } finally {
       if (redeemTx) {
-        // segmentUA(uaData);
         dispatch(clearPendingTxn(redeemTx.hash));
       }
     }

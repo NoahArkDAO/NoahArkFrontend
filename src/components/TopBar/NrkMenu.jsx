@@ -12,7 +12,8 @@ import { dai } from "src/helpers/AllBonds";
 import { Trans } from "@lingui/macro";
 import { useWeb3Context } from "../../hooks/web3Context";
 
-import NrkImg from "src/assets/tokens/token_NRK.svg";
+import NrkImg from "src/assets/tokens/token_NRK_white.svg";
+import sNrkImg from "src/assets/tokens/token_NRK.svg";
 
 import { useSelector } from "react-redux";
 
@@ -24,6 +25,9 @@ const addTokenToWallet = (tokenSymbol, tokenAddress, address) => async () => {
     switch (tokenSymbol) {
       case "NRK":
         tokenPath = NrkImg;
+        break;
+      case "sNRK":
+        tokenPath = sNrkImg;
         break;
       default:
         tokenPath = NrkImg;
@@ -59,6 +63,7 @@ function NrkMenu() {
   const theme = window.localStorage.getItem("theme");
   const SNRK_ADDRESS = addresses[networkID].SNRK_ADDRESS;
   const NRK_ADDRESS = addresses[networkID].NRK_ADDRESS;
+  const DAI_ADDRESS = addresses[networkID].DAI_ADDRESS;
   const handleClick = event => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
@@ -85,22 +90,35 @@ function NrkMenu() {
         {({ TransitionProps }) => {
           return (
             <Fade {...TransitionProps} timeout={100}>
-              <Paper className={`ohm-menu ${theme === "dark" ? "theme-dark" : ""}`} elevation={1}>
-                <Box component="div" className="buy-tokens">
+              <Paper className={`ohm-menu ${theme === "dark" ? "theme-dark" : "theme-dark"}`} elevation={1}>
+                {/* <Box component="div" className="buy-tokens">
                   <Link
-                    href={`https://traderjoexyz.com/#/swap?inputCurrency=${daiAddress}&outputCurrency=${NRK_ADDRESS}`}
+                    href={`https://avalanche.sushi.com/swap?inputCurrency=${NRK_ADDRESS}&outputCurrency=${DAI_RESERVE_ADDRESS}`}
                     target="_blank"
                     rel="noreferrer"
                   >
                     <Button size="large" variant="contained" color="secondary" fullWidth>
                       <Typography align="left">
-                        <Trans>Buy on {new String("Traderjoexyz")}</Trans>
+                        <Trans>Buy on Sushi</Trans>
+                        <SvgIcon component={ArrowUpIcon} htmlColor="#A3A3A3" />
+                      </Typography>
+                    </Button>
+                  </Link>
+                </Box> */}
+                <Box component="div" className="buy-tokens">
+                  <Link
+                    href={`https://traderjoexyz.com/#/trade?outputCurrency=${NRK_ADDRESS}&inputCurrency=${DAI_ADDRESS}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Button size="large" variant="contained" color="secondary" fullWidth>
+                      <Typography align="left">
+                        <Trans>Buy on traderjoexyz</Trans>
                         <SvgIcon component={ArrowUpIcon} htmlColor="#A3A3A3" />
                       </Typography>
                     </Button>
                   </Link>
                 </Box>
-
 
                 {isEthereumAPIAvailable ? (
                   <Box className="add-tokens">

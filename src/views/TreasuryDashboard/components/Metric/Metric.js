@@ -55,7 +55,10 @@ export const BackingPerNRK = () => {
 
   return (
     <Metric className="bpo">
-      <Metric.Title>Backing per NRK</Metric.Title>
+      <Metric.Title>
+        Backing per NRK
+        <InfoTooltip message="The Backing per NRK is currently less than $4 because part of DAI was temporarily used to create LP, which will be restored to normal value after it is returned to the Treasury." />
+      </Metric.Title>
       <Metric.Value>{!isNaN(backingPerNrk) && formatCurrency(backingPerNrk, 2)}</Metric.Value>
     </Metric>
   );

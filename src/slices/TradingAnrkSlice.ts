@@ -76,7 +76,7 @@ export const tradingApprove = createAsyncThunk(
           await approveTx.wait();
         }
       } catch (e: unknown) {
-        dispatch(error((e as IJsonRPCError).message));
+        dispatch(error((e as IJsonRPCError).data.message));
         return;
       } finally {
         if (approveTx) {
@@ -128,7 +128,7 @@ export const tradingAnrk = createAsyncThunk(
         await tradingTx.wait();
       } catch (e: unknown) {
         const rpcError = e as IJsonRPCError;
-        dispatch(error(rpcError.message));
+        dispatch(error(rpcError.data.message));
         return;
       } finally {
         if (tradingTx) {

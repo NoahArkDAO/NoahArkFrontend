@@ -30,10 +30,10 @@ export const handleBackdropFilter = rgbaString => {
 };
 
 const commonSettings = {
-  direction: "ltr",
+  direction: "ttb",
   typography: {
     fontSize: 16,
-    fontFamily: "Square",
+    fontFamily: "Square ,Cinzel",
     h1: {
       fontSize: "3.3rem",
     },
