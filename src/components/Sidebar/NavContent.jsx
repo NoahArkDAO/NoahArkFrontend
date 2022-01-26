@@ -12,6 +12,7 @@ import { ReactComponent as NoaharkIcon } from "../../assets/icons/noahark-nav-he
 import { ReactComponent as NoaharkIconDark } from "../../assets/icons/noahark-nav-header-dark.svg";
 import { ReactComponent as ZapIcon } from "../../assets/icons/zap.svg";
 import { Trans } from "@lingui/macro";
+import Davatar from "@davatar/react";
 import { trim, shorten } from "../../helpers";
 import { useAddress, useWeb3Context } from "src/hooks/web3Context";
 import useBonds from "../../hooks/Bonds";
@@ -24,6 +25,7 @@ function NavContent({ themes }) {
   const address = useAddress();
   const { chainID } = useWeb3Context();
   const { bonds } = useBonds(chainID);
+  const { ensName } = useAddress(address);
 
   const checkPage = useCallback((match, location, page) => {
     const currentPath = location.pathname.replace("/", "");
@@ -58,8 +60,11 @@ function NavContent({ themes }) {
 
             {address && (
               <div className="wallet-link">
+                <span className="davatar">
+                  <Davatar size={20} address={address} />
+                </span>
                 <Link href={`https://etherscan.io/address/${address}`} target="_blank">
-                  {shorten(address)}
+                  {ensName || shorten(address)}
                 </Link>
               </div>
             )}
@@ -122,15 +127,15 @@ function NavContent({ themes }) {
                       {/* {!bond.bondDiscount ? (
                         <Skeleton variant="text" width={"150px"} />
                       ) : ( */}
-                        <Typography variant="body2">
-                          {bond.displayName}
+                      <Typography variant="body2">
+                        {bond.displayName}
 
-                          <span className="bond-pair-roi">
-                            {!bond.isAvailable[chainID]
-                              ? "Sold Out"
-                              : `${bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%`}
-                          </span>
-                        </Typography>
+                        <span className="bond-pair-roi">
+                          {!bond.isAvailable[chainID]
+                            ? "Sold Out"
+                            : `${bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%`}
+                        </span>
+                      </Typography>
                       {/* )} */}
                     </Link>
                   ))}
@@ -159,7 +164,6 @@ function NavContent({ themes }) {
                   );
                 })}
               </div>
-
             </div>
           </div>
         </div>

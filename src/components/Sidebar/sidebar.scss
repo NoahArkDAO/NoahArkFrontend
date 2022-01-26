@@ -36,7 +36,13 @@
     margin: 0 auto;
   }
   .wallet-link {
-    margin: 10px;
+    margin: 15px;
+    display: flex;
+    align-items: center;
+
+    .davatar {
+      margin-right: 8px;
+    }
   }
 }
 
